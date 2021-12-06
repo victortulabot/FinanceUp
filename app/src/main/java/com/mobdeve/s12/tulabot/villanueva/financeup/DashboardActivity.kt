@@ -37,5 +37,12 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(gotoAddActivity)
             finish()
         }
+
+        binding!!.btnSettings.setOnClickListener {
+            val gotoSettingsActivity = Intent(applicationContext, SettingsActivity:: class.java)
+
+            startActivity(gotoSettingsActivity)
+            finish()
+        }
     }
 }
