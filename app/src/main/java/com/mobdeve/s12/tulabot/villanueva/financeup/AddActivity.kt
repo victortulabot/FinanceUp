@@ -12,5 +12,11 @@ class AddActivity : AppCompatActivity() {
 
         binding = ActivityAddBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        // receive data using bundle
+        val bundle = intent.extras
+        val type = bundle!!.getString("type")
+
+        binding!!.tvAddHeader.text = "Add $type"
     }
 }

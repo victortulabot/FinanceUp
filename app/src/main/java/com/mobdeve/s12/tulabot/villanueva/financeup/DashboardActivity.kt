@@ -17,6 +17,23 @@ class DashboardActivity : AppCompatActivity() {
         binding!!.btnAddIncome.setOnClickListener{
             val gotoAddActivity = Intent(applicationContext, AddActivity:: class.java)
 
+            // pass data using bundle
+            var bundle = Bundle()
+            bundle.putString("type", "Income")
+            gotoAddActivity.putExtras(bundle)
+
+            startActivity(gotoAddActivity)
+            finish()
+        }
+
+        binding!!.btnAddExpense.setOnClickListener{
+            val gotoAddActivity = Intent(applicationContext, AddActivity:: class.java)
+
+            // pass data using bundle
+            var bundle = Bundle()
+            bundle.putString("type", "Expense")
+            gotoAddActivity.putExtras(bundle)
+
             startActivity(gotoAddActivity)
             finish()
         }
