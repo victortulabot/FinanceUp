@@ -146,20 +146,20 @@
         android:background="@android:color/darker_gray">
 
         <Button
-            android:id="@+id/btn_add_income"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_margin="20dp"
-            android:backgroundTint="#556B2F"
-            android:text="+ Income"/>
-
-        <Button
             android:id="@+id/btn_add_expense"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_margin="20dp"
             android:backgroundTint="#AA4A44"
             android:text="+ Expense"/>
+
+        <Button
+            android:id="@+id/btn_add_income"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_margin="20dp"
+            android:backgroundTint="#556B2F"
+            android:text="+ Income"/>
 
     </LinearLayout>
 
