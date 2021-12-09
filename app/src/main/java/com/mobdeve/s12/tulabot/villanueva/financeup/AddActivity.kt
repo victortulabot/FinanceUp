@@ -1,5 +1,6 @@
 package com.mobdeve.s12.tulabot.villanueva.financeup
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityAddBinding
@@ -18,5 +19,12 @@ class AddActivity : AppCompatActivity() {
         val type = bundle!!.getString("type")
 
         binding!!.tvAddHeader.text = "Add $type"
+
+        binding!!.btnCancel.setOnClickListener {
+            val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
+
+            startActivity(gotoDashboardActivity)
+            finish()
+        }
     }
 }
