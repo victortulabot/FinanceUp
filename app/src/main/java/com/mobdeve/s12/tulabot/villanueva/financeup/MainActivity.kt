@@ -2,6 +2,7 @@ package com.mobdeve.s12.tulabot.villanueva.financeup
 
 import android.content.Intent
 import android.database.DatabaseUtils
+import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
-        var db = DBHelper(this)
+        var db = DBHelper(applicationContext)
 
         binding!!.btnLog.setOnClickListener {
             binding!!.etConfirmPassword.visibility = View.INVISIBLE;
@@ -77,8 +78,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
-//                    var log = db.loginDataUser(username, password)
-                    var log = true
+                    var log = db.loginDataUser(username, password)
                     if (log){
                         val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
 

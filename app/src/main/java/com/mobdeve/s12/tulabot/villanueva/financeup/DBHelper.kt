@@ -2,6 +2,7 @@ package com.mobdeve.s12.tulabot.villanueva.financeup
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -23,13 +24,13 @@ class DBHelper(context: Context?) :
 
         //column names
         const val TABLEUSERS = "users"
-        const val USERSID = "id"
+        const val USERSID = "_id"
         const val USERSNAME = "username"
         const val USERSPASS = "userpass"
-        private const val CREATE_USER_TABLE = ("create table " + TABLEUSERS + "( "
+        private const val CREATE_USER_TABLE = ("create table " + TABLEUSERS + "("
                 + USERSID + " integer primary key autoincrement, "
                 + USERSNAME + " text, "
-                + USERSPASS + " text ); ")
+                + USERSPASS + " text ) ")
     }
 
     fun insertDataUser(username: String, password: String){
@@ -45,8 +46,8 @@ class DBHelper(context: Context?) :
     fun checkDataUser(username: String):Boolean{
         var boolResult = false
         val db = this.writableDatabase
-        val query = "Select * from users where username = " + username + ""
-        val result = db.rawQuery(query, null )
+        val query = "Select * from users where username = ?"
+        val result:Cursor = db.rawQuery(query, arrayOf(username) )
 
         if (result.count > 0){
             boolResult = true
@@ -60,9 +61,9 @@ class DBHelper(context: Context?) :
 
     fun loginDataUser(username: String, password: String):Boolean{
         var boolResult = false
-        val db = this.writableDatabase
-        val query = "Select * from users where username = " + username + " and userpass = " + password + ""
-        val result = db.rawQuery(query, null )
+        val db = this.readableDatabase
+        val query = "Select * from users where username = ? and userpass = ?"
+        val result:Cursor = db.rawQuery(query, arrayOf(username,password) )
 
         if (result.count > 0){
             boolResult = true
