@@ -14,6 +14,13 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
+        binding!!.btnChangePassword.setOnClickListener {
+            val gotoChangePassActivity = Intent(applicationContext, ChangePassActivity:: class.java)
+
+            startActivity(gotoChangePassActivity)
+            finish()
+        }
+
         binding!!.btnLogout.setOnClickListener{
             val gotoMainActivity = Intent(applicationContext, MainActivity:: class.java)
 
