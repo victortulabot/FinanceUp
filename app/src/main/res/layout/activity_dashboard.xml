@@ -122,7 +122,7 @@
                     android:id="@+id/tv_balance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="₱629.64"
+                    android:text="₱"
                     android:padding="10dp"
                     android:layout_marginLeft="50dp"
                     android:textColor="@color/black"

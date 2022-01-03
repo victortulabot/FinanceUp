@@ -14,6 +14,12 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 
+        var income = binding!!.tvIncome.text.toString().split("₱");
+
+        var expense = binding!!.tvExpense.text.toString().split("₱");
+
+        binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
+
         binding!!.btnAddIncome.setOnClickListener{
             val gotoAddActivity = Intent(applicationContext, AddActivity:: class.java)
 
