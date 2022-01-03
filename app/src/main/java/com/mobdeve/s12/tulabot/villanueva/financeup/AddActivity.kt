@@ -1,8 +1,11 @@
 package com.mobdeve.s12.tulabot.villanueva.financeup
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.ArrayAdapter
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityAddBinding
 
 class AddActivity : AppCompatActivity() {
@@ -20,6 +23,28 @@ class AddActivity : AppCompatActivity() {
 
         binding!!.tvAddHeader.text = "Add $type"
 
+        val spinner = binding!!.spinnerCategory
+        var List: ArrayList<String> = ArrayList<String>();
+
+        if (type == "Income"){
+            List.add("Salary");
+            List.add("Carry Over");
+        } else {
+            List.add("Transportation");
+            List.add("Utilities");
+            List.add("Entertainment");
+            List.add("Clothing");
+            List.add("General");
+        }
+
+        var adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, List);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        binding!!.tvPhoto.setOnClickListener {
+            dispatchTakePictureIntent()
+        }
+
         binding!!.btnCancel.setOnClickListener {
             val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
 
@@ -27,4 +52,16 @@ class AddActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    val REQUEST_IMAGE_CAPTURE = 1
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+    }
+
 }

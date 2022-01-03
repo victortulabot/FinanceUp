@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.5"
         android:paddingTop="50dp"
         android:background="@android:color/darker_gray">
 
@@ -32,7 +32,7 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="3.5"
         android:stretchColumns="2"
         android:padding="20dp"
         android:background="#f5efdc">
@@ -77,14 +77,16 @@
                 android:layout_height="wrap_content"
                 android:layout_column="1" />
 
-            <EditText
-                android:id="@+id/tv_category"
+            <Spinner
+                android:id="@+id/spinner_category"
                 android:width="200dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
                 android:layout_marginStart="20sp"
-                android:layout_marginLeft="20sp" />
+                android:layout_marginLeft="20sp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown"/>
         </TableRow>
 
     </TableLayout>
@@ -105,11 +107,14 @@
                 android:layout_height="wrap_content"
                 android:layout_column="1" />
             <TextView
+                android:id="@+id/tv_photo"
                 android:text="Add Photo"
+                android:textColor="#0000FF"
                 android:gravity="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:clickable="true"/>
 
         </TableRow>
     </TableLayout>
