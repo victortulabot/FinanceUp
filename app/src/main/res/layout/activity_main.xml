@@ -10,7 +10,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/tv_signup"
+        android:id="@+id/tv_FinanceUp"
         android:text="FinanceUp"
         android:layout_weight="4"
         android:textSize="40sp"
@@ -33,15 +33,17 @@
 
         <TableRow>
             <Button
+                android:id="@+id/btn_log"
                 android:text="Login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:layout_column="1"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="#A9A9A9"
                 android:textColor="@color/black"/>
             <Button
+                android:id="@+id/btn_register"
                 android:text="Register"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
@@ -90,6 +92,7 @@
 
         <EditText
             android:id="@+id/et_confirm_password"
+            android:visibility="invisible"
             android:hint="Confirm Password"
             android:inputType="textPassword"
             android:gravity="left"
