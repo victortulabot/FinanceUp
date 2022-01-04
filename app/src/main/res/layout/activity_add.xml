@@ -51,6 +51,9 @@
                 android:text="MMMM/dd/yyyy"
                 android:layout_marginLeft="10sp"
                 android:layout_marginStart="20sp"
+                android:maxLines="1"
+                android:lines="1"
+                android:singleLine="true"
                 android:clickable="true"/>
         </TableRow>
         <TableRow>
