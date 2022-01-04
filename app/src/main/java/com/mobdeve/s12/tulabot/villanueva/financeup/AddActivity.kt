@@ -1,15 +1,21 @@
 package com.mobdeve.s12.tulabot.villanueva.financeup
 
+import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityAddBinding
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AddActivity : AppCompatActivity() {
     var binding: ActivityAddBinding? = null
+    var cal = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +46,22 @@ class AddActivity : AppCompatActivity() {
         var adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, List);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+
+        val myFormat = "MM/dd/yyyy"
+        val sdf = SimpleDateFormat(myFormat)
+        binding!!.etDate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
+
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH)
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+
+        binding!!.etDate.setOnClickListener {
+            val dpd =
+                DatePickerDialog(this@AddActivity, DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+                    binding!!.etDate.setText("" + (month+1) + "/" + dayOfMonth + "/" + year)
+                }, year, month, day)
+            dpd.show()
+        }
 
         binding!!.tvPhoto.setOnClickListener {
             dispatchTakePictureIntent()
