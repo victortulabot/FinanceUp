@@ -47,7 +47,7 @@ class AddActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        val myFormat = "MM/dd/yyyy"
+        val myFormat = "MMMM dd, yyyy"
         val sdf = SimpleDateFormat(myFormat)
         binding!!.etDate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
 
@@ -58,7 +58,9 @@ class AddActivity : AppCompatActivity() {
         binding!!.etDate.setOnClickListener {
             val dpd =
                 DatePickerDialog(this@AddActivity, DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
-                    binding!!.etDate.setText("" + (month+1) + "/" + dayOfMonth + "/" + year)
+                    cal.set(year,month,dayOfMonth)
+                    val pickedNewDate = sdf.format(cal.getTime())
+                    binding!!.etDate.setText(pickedNewDate)
                 }, year, month, day)
             dpd.show()
         }

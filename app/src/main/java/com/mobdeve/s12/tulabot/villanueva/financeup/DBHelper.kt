@@ -17,6 +17,7 @@ class DBHelper(var context: Context?) :
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLEUSERS)
+        db.execSQL("DROP TABLE IF EXISTS transactions")
         onCreate(db)
     }
 

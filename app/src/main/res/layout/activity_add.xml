@@ -48,7 +48,7 @@
                 android:id="@+id/et_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MM/dd/yyyy"
+                android:text="MMMM/dd/yyyy"
                 android:layout_marginLeft="10sp"
                 android:layout_marginStart="20sp"
                 android:clickable="true"/>
