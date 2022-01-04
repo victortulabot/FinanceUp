@@ -5,12 +5,14 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.widget.Toast
 
-class DBHelper(context: Context?) :
+class DBHelper(var context: Context?) :
     SQLiteOpenHelper(context, DATABASENAME, null, DATABASEVERSION){
 
     override fun onCreate(db: SQLiteDatabase){
         db.execSQL(CREATE_USER_TABLE)
+        db.execSQL(CREATE_TRANSACTION_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -31,6 +33,14 @@ class DBHelper(context: Context?) :
                 + USERSID + " integer primary key autoincrement, "
                 + USERSNAME + " text, "
                 + USERSPASS + " text ) ")
+        private const val CREATE_TRANSACTION_TABLE = ("create table transactions ("
+                + "_id integer primary key autoincrement, "
+                + "userid integer, "
+                + "type text, "
+                + "date date, "
+                + "amount float, "
+                + "category text, "
+                + "note text ) ")
     }
 
     fun insertDataUser(username: String, password: String){
@@ -73,5 +83,44 @@ class DBHelper(context: Context?) :
         db.close()
 
         return boolResult
+    }
+
+    fun getUserID(username: String): Int{
+        val db = this.readableDatabase
+        val query = "Select _id from users where username = ?"
+        val result = db.rawQuery(query, arrayOf(username))
+
+        var retRes = 0
+
+        if(result.moveToFirst()){
+            retRes = result.getInt(0)
+        }
+
+        return retRes
+    }
+
+    fun getUserPassword(username: String?): String{
+        val db = this.readableDatabase
+        val query = "Select userpass from users where username = ?"
+        val result = db.rawQuery(query, arrayOf(username))
+
+        var retRes = ""
+
+        if(result.moveToFirst()){
+            retRes = result.getString(0)
+        }
+
+        return retRes
+    }
+
+    fun changeUserPassword(username: String?, password: String){
+        val db = this.writableDatabase
+        val cv = ContentValues()
+
+        cv.put(USERSPASS, password)
+
+        db.update("users", cv, "username = ?", arrayOf(username))
+
+        db.close()
     }
 }
