@@ -8,13 +8,16 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityAddBinding
+import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class AddActivity : AppCompatActivity() {
     var binding: ActivityAddBinding? = null
+    lateinit var sharedPrefUtility: SharePrefUtility
     var cal = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +25,9 @@ class AddActivity : AppCompatActivity() {
 
         binding = ActivityAddBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        var db = DBHelper(applicationContext)
+        sharedPrefUtility = SharePrefUtility(this)
 
         // receive data using bundle
         val bundle = intent.extras
@@ -70,6 +76,24 @@ class AddActivity : AppCompatActivity() {
         }
 
         binding!!.btnCancel.setOnClickListener {
+            val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
+
+            startActivity(gotoDashboardActivity)
+            finish()
+        }
+
+        binding!!.btnAdd.setOnClickListener{
+            val userid = sharedPrefUtility.getIntegerPreferences("id")
+            val transDate = binding!!.etDate.text.toString()
+            val amount = binding!!.etAmount.text.toString().toFloat()
+            val category = binding!!.spinnerCategory.selectedItem.toString()
+            val note = binding!!.etNote.text.toString()
+            db.insertTransaction(userid,type,transDate,amount,category,note)
+
+            Toast.makeText(applicationContext,
+                "Transaction addedd successfully!",
+                Toast.LENGTH_SHORT).show()
+
             val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
 
             startActivity(gotoDashboardActivity)
