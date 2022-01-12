@@ -88,6 +88,7 @@ class AddActivity : AppCompatActivity() {
             val amount = binding!!.etAmount.text.toString().toFloat()
             val category = binding!!.spinnerCategory.selectedItem.toString()
             val note = binding!!.etNote.text.toString()
+
             db.insertTransaction(userid,type,transDate,amount,category,note)
 
             Toast.makeText(applicationContext,

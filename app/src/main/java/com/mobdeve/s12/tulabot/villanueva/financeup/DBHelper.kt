@@ -18,13 +18,13 @@ class DBHelper(var context: Context?) :
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLEUSERS)
-        db.execSQL("DROP TABLE IF EXISTS transactions")
+        db.execSQL("DROP TABLE IF EXISTS " + TABLETRANSACTIONS)
         onCreate(db)
     }
 
     companion object {
         private const val DATABASENAME = "FinanceUp.db"
-        private const val DATABASEVERSION = 2
+        private const val DATABASEVERSION = 1
 
         //column names
         const val TABLEUSERS = "users"
@@ -39,15 +39,16 @@ class DBHelper(var context: Context?) :
         const val AMOUNT = "amount"
         const val CATEGORY = "category"
         const val NOTE = "note"
+
         private const val CREATE_USER_TABLE = ("create table " + TABLEUSERS + "("
                 + USERSID + " integer primary key autoincrement, "
                 + USERSNAME + " text, "
                 + USERSPASS + " text ) ")
-        private const val CREATE_TRANSACTION_TABLE = ("create table transactions ("
+        private const val CREATE_TRANSACTION_TABLE = ("create table " + TABLETRANSACTIONS + "("
                 + "_id integer primary key autoincrement, "
                 + USERID + " integer, "
                 + TYPE + " text, "
-                + TRANSDATE + "text, "
+                + TRANSDATE + " text, "
                 + AMOUNT + " float, "
                 + CATEGORY + " text, "
                 + NOTE + " text ) ")
@@ -144,7 +145,6 @@ class DBHelper(var context: Context?) :
         cv.put(AMOUNT, amount)
         cv.put(CATEGORY, category)
         cv.put(NOTE, note)
-
         db.insert(TABLETRANSACTIONS, null, cv)
 
         db.close()
@@ -152,8 +152,21 @@ class DBHelper(var context: Context?) :
 
     fun getIncomeTransactions(userid: Int?): Float{
         val db = this.readableDatabase
-        val query = "Select SUM(amount) from transactions where userid = ?"
-        val result = db.rawQuery(query, arrayOf(userid.toString()))
+        val query = "Select SUM(amount) from transactions where userid = ? and type = ?"
+        val result = db.rawQuery(query, arrayOf(userid.toString(), "Income"))
+
+        var retRes = 0F
+        if(result.moveToFirst()){
+            retRes = result.getFloat(0)
+        }
+
+        return retRes
+    }
+
+    fun getExpenseTransactions(userid: Int?): Float{
+        val db = this.readableDatabase
+        val query = "Select SUM(amount) from transactions where userid = ? and type = ?"
+        val result = db.rawQuery(query, arrayOf(userid.toString(), "Expense"))
 
         var retRes = 0F
         if(result.moveToFirst()){

@@ -19,9 +19,13 @@ class DashboardActivity : AppCompatActivity() {
         var db = DBHelper(applicationContext)
         sharedPrefUtility = SharePrefUtility(this)
 
-//        val getIncome = db.getIncomeTransactions(sharedPrefUtility.getIntegerPreferences("id")).toString()
+        val userid = sharedPrefUtility.getIntegerPreferences("id")
+
+        val getIncome = db.getIncomeTransactions(userid).toString()
+        val getExpense = db.getExpenseTransactions(userid).toString()
 //
-//        binding!!.tvIncome.text = "₱$getIncome"
+        binding!!.tvIncome.text = "₱$getIncome"
+        binding!!.tvExpense.text = "₱$getExpense"
 
         var income = binding!!.tvIncome.text.toString().split("₱");
 
