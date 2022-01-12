@@ -4,15 +4,28 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
+import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
 
 class DashboardActivity : AppCompatActivity() {
     var binding: ActivityDashboardBinding? = null
+    lateinit var sharedPrefUtility: SharePrefUtility
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+
+        var db = DBHelper(applicationContext)
+        sharedPrefUtility = SharePrefUtility(this)
+
+        val userid = sharedPrefUtility.getIntegerPreferences("id")
+
+        val getIncome = db.getIncomeTransactions(userid).toString()
+        val getExpense = db.getExpenseTransactions(userid).toString()
+//
+        binding!!.tvIncome.text = "₱$getIncome"
+        binding!!.tvExpense.text = "₱$getExpense"
 
         var income = binding!!.tvIncome.text.toString().split("₱");
 

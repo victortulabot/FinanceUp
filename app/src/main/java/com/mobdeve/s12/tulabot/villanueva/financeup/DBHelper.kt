@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.widget.Toast
+import java.sql.Date
 
 class DBHelper(var context: Context?) :
     SQLiteOpenHelper(context, DATABASENAME, null, DATABASEVERSION){
@@ -17,7 +18,7 @@ class DBHelper(var context: Context?) :
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLEUSERS)
-        db.execSQL("DROP TABLE IF EXISTS transactions")
+        db.execSQL("DROP TABLE IF EXISTS " + TABLETRANSACTIONS)
         onCreate(db)
     }
 
@@ -30,18 +31,27 @@ class DBHelper(var context: Context?) :
         const val USERSID = "_id"
         const val USERSNAME = "username"
         const val USERSPASS = "userpass"
+
+        const val TABLETRANSACTIONS = "transactions"
+        const val USERID = "userid"
+        const val TYPE = "type"
+        const val TRANSDATE = "transDate"
+        const val AMOUNT = "amount"
+        const val CATEGORY = "category"
+        const val NOTE = "note"
+
         private const val CREATE_USER_TABLE = ("create table " + TABLEUSERS + "("
                 + USERSID + " integer primary key autoincrement, "
                 + USERSNAME + " text, "
                 + USERSPASS + " text ) ")
-        private const val CREATE_TRANSACTION_TABLE = ("create table transactions ("
+        private const val CREATE_TRANSACTION_TABLE = ("create table " + TABLETRANSACTIONS + "("
                 + "_id integer primary key autoincrement, "
-                + "userid integer, "
-                + "type text, "
-                + "date date, "
-                + "amount float, "
-                + "category text, "
-                + "note text ) ")
+                + USERID + " integer, "
+                + TYPE + " text, "
+                + TRANSDATE + " text, "
+                + AMOUNT + " float, "
+                + CATEGORY + " text, "
+                + NOTE + " text ) ")
     }
 
     fun insertDataUser(username: String, password: String){
@@ -123,5 +133,46 @@ class DBHelper(var context: Context?) :
         db.update("users", cv, "username = ?", arrayOf(username))
 
         db.close()
+    }
+
+    fun insertTransaction(userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String){
+        val db = this.writableDatabase
+        val cv = ContentValues()
+
+        cv.put(USERID, userid)
+        cv.put(TYPE, type)
+        cv.put(TRANSDATE, transDate)
+        cv.put(AMOUNT, amount)
+        cv.put(CATEGORY, category)
+        cv.put(NOTE, note)
+        db.insert(TABLETRANSACTIONS, null, cv)
+
+        db.close()
+    }
+
+    fun getIncomeTransactions(userid: Int?): Float{
+        val db = this.readableDatabase
+        val query = "Select SUM(amount) from transactions where userid = ? and type = ?"
+        val result = db.rawQuery(query, arrayOf(userid.toString(), "Income"))
+
+        var retRes = 0F
+        if(result.moveToFirst()){
+            retRes = result.getFloat(0)
+        }
+
+        return retRes
+    }
+
+    fun getExpenseTransactions(userid: Int?): Float{
+        val db = this.readableDatabase
+        val query = "Select SUM(amount) from transactions where userid = ? and type = ?"
+        val result = db.rawQuery(query, arrayOf(userid.toString(), "Expense"))
+
+        var retRes = 0F
+        if(result.moveToFirst()){
+            retRes = result.getFloat(0)
+        }
+
+        return retRes
     }
 }

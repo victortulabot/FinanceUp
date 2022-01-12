@@ -73,6 +73,9 @@ class MainActivity : AppCompatActivity() {
                             ).show()
                         } else {
                             db.insertDataUser(username, password);
+                            sharedPrefUtility.saveBoolPreferences("isLoggedIn", true)
+                            sharedPrefUtility.saveStringPreferences("username", username)
+                            sharedPrefUtility.saveIntegerPreferences("id", db.getUserID(username))
 
                             val gotoDashboardActivity =
                                 Intent(applicationContext, DashboardActivity::class.java)
