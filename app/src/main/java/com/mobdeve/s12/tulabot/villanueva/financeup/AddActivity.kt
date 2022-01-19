@@ -85,20 +85,30 @@ class AddActivity : AppCompatActivity() {
         binding!!.btnAdd.setOnClickListener{
             val userid = sharedPrefUtility.getIntegerPreferences("id")
             val transDate = binding!!.etDate.text.toString()
-            val amount = binding!!.etAmount.text.toString().toFloat()
+            val am = binding!!.etAmount.text.toString()
             val category = binding!!.spinnerCategory.selectedItem.toString()
             val note = binding!!.etNote.text.toString()
 
-            db.insertTransaction(userid,type,transDate,amount,category,note)
+            // check if inputs are not empty
+            if (am == "") {
+                Toast.makeText(
+                    applicationContext,
+                    "Please input an amount!",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                val amount = am.toFloat()
+                db.insertTransaction(userid,type,transDate,amount,category,note)
 
-            Toast.makeText(applicationContext,
-                "Transaction addedd successfully!",
-                Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,
+                    "Transaction added successfully!",
+                    Toast.LENGTH_SHORT).show()
 
-            val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
+                val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
 
-            startActivity(gotoDashboardActivity)
-            finish()
+                startActivity(gotoDashboardActivity)
+                finish()
+            }
         }
     }
 

@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hi, Username!"
+            android:textColor="@color/black"
             android:padding="15dp"
             android:textSize="20sp"
             android:layout_marginHorizontal="20dp"
@@ -44,6 +45,7 @@
         <Button
             android:id="@+id/btn_change_password"
             android:text="Change Password"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -55,6 +57,7 @@
         <Button
             android:id="@+id/btn_reset"
             android:text="Reset Data"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -66,6 +69,7 @@
         <Button
             android:id="@+id/btn_logout"
             android:text="Log Out"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
