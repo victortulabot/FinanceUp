@@ -11,6 +11,7 @@ import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
+import com.mobdeve.s12.tulabot.villanueva.financeup.util.TransactionsActivity
 
 class DashboardActivity : AppCompatActivity() {
     var binding: ActivityDashboardBinding? = null
@@ -42,7 +43,7 @@ class DashboardActivity : AppCompatActivity() {
         binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
 
         // get transaction list using adapter
-        transactionList = db.getAllTransactions(userid)
+        transactionList = db.getDashboardTransactions(userid)
         transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
         binding!!.transactionlist.layoutManager = LinearLayoutManager(applicationContext,
@@ -71,6 +72,13 @@ class DashboardActivity : AppCompatActivity() {
             gotoAddActivity.putExtras(bundle)
 
             startActivity(gotoAddActivity)
+            finish()
+        }
+
+        binding!!.btnTransactions.setOnClickListener {
+            val gotoTransactionsActivity = Intent(applicationContext, TransactionsActivity:: class.java)
+
+            startActivity(gotoTransactionsActivity)
             finish()
         }
 

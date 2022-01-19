@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinanceUp">
         <activity
+            android:name=".util.TransactionsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChangePassActivity"
             android:exported="true" />
         <activity

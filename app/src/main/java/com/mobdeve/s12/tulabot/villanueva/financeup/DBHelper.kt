@@ -10,6 +10,9 @@ import android.widget.Toast
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import java.lang.Exception
 import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DBHelper(var context: Context?) :
     SQLiteOpenHelper(context, DATABASENAME, null, DATABASEVERSION){
@@ -179,12 +182,11 @@ class DBHelper(var context: Context?) :
         return retRes
     }
 
-
-    // transaction table columns - _id, USERID, TYPE, TRANSDATE. AMOUNT, CATEGORY, NOTE
-    fun getAllTransactions(userid: Int?): ArrayList<Transaction?>{
+    fun getDashboardTransactions(userid: Int?): ArrayList<Transaction?>{
+        val date = dateFormat(Calendar.getInstance())
         val db = this.readableDatabase
-        val query = "Select * from transactions where userid = ? order by _id desc"
-        val cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString()))
+        val query = "Select * from transactions where userid = ? and transdate = ? order by _id desc"
+        val cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), date))
         var transactionList: ArrayList<Transaction?> = ArrayList();
 
         try{
@@ -211,5 +213,88 @@ class DBHelper(var context: Context?) :
         }
 
         return transactionList
+    }
+
+    fun getFilterTransactions(userid: Int?, type: String, category: String): ArrayList<Transaction?>{
+        val db = this.readableDatabase
+        var query = "Select * from transactions where userid = ? and type = ? and category = ? order by transDate desc, _id desc"
+        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type, category))
+        var transactionList: ArrayList<Transaction?> = ArrayList();
+
+        if(category == "All"){
+            query = "Select * from transactions where userid = ? and type = ? order by transDate desc, _id desc"
+            cursor = db.rawQuery(query, arrayOf(userid.toString(), type))
+        }
+
+        try{
+            if(cursor.moveToFirst()){
+                do{
+                    val id = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val userid = cursor.getString(cursor.getColumnIndexOrThrow(USERID))
+                    val type = cursor.getString(cursor.getColumnIndexOrThrow(TYPE))
+                    val transdate = cursor.getString(cursor.getColumnIndexOrThrow(TRANSDATE))
+                    val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
+                    val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
+                    val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+
+                    transactionList.add(Transaction(id.toInt(),userid.toInt(),
+                        type,transdate,amount.toFloat(), category,note))
+                } while(cursor.moveToNext())
+            }
+        } catch (e: Exception){
+            Log.d("DATABASE ERROR", "Error while trying to get all transactions of user from database" )
+        } finally {
+            if(!cursor.isClosed()){
+                cursor.close()
+            }
+        }
+
+        return transactionList
+    }
+
+    // transaction table columns - _id, USERID, TYPE, TRANSDATE. AMOUNT, CATEGORY, NOTE
+    fun getAllTransactions(userid: Int?, type:String): ArrayList<Transaction?>{
+        val db = this.readableDatabase
+        var query = "Select * from transactions where userid = ? and type = ? order by transDate desc, _id desc"
+        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type))
+        var transactionList: ArrayList<Transaction?> = ArrayList();
+
+        if(type == "All"){
+            query = "Select * from transactions where userid = ? order by transDate desc, _id desc"
+            cursor = db.rawQuery(query, arrayOf(userid.toString()))
+        }
+
+        try{
+            if(cursor.moveToFirst()){
+                do{
+                    val id = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val userid = cursor.getString(cursor.getColumnIndexOrThrow(USERID))
+                    val type = cursor.getString(cursor.getColumnIndexOrThrow(TYPE))
+                    val transdate = cursor.getString(cursor.getColumnIndexOrThrow(TRANSDATE))
+                    val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
+                    val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
+                    val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+
+                    transactionList.add(Transaction(id.toInt(),userid.toInt(),
+                        type,transdate,amount.toFloat(), category,note))
+                } while(cursor.moveToNext())
+            }
+        } catch (e: Exception){
+            Log.d("DATABASE ERROR", "Error while trying to get all transactions of user from database" )
+        } finally {
+            if(!cursor.isClosed()){
+                cursor.close()
+            }
+        }
+
+        return transactionList
+    }
+
+    fun dateFormat(rawdate: Calendar): String{
+        val myFormat = "MMMM dd, yyyy"
+        val sdf = SimpleDateFormat(myFormat)
+        val date = sdf.format(rawdate.getTime())
+
+        return date
     }
 }
