@@ -5,7 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import android.widget.Toast
+import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
+import java.lang.Exception
 import java.sql.Date
 
 class DBHelper(var context: Context?) :
@@ -174,5 +177,39 @@ class DBHelper(var context: Context?) :
         }
 
         return retRes
+    }
+
+
+    // transaction table columns - _id, USERID, TYPE, TRANSDATE. AMOUNT, CATEGORY, NOTE
+    fun getAllTransactions(userid: Int?): ArrayList<Transaction?>{
+        val db = this.readableDatabase
+        val query = "Select * from transactions where userid = ? order by _id desc"
+        val cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString()))
+        var transactionList: ArrayList<Transaction?> = ArrayList();
+
+        try{
+            if(cursor.moveToFirst()){
+                do{
+                    val id = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val userid = cursor.getString(cursor.getColumnIndexOrThrow(USERID))
+                    val type = cursor.getString(cursor.getColumnIndexOrThrow(TYPE))
+                    val transdate = cursor.getString(cursor.getColumnIndexOrThrow(TRANSDATE))
+                    val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
+                    val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
+                    val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+
+                    transactionList.add(Transaction(id.toInt(),userid.toInt(),
+                        type,transdate,amount.toFloat(), category,note))
+                } while(cursor.moveToNext())
+            }
+        } catch (e: Exception){
+            Log.d("DATABASE ERROR", "Error while trying to get all transactions of user from database" )
+        } finally {
+            if(!cursor.isClosed()){
+                cursor.close()
+            }
+        }
+
+        return transactionList
     }
 }

@@ -36,7 +36,7 @@
         android:layout_weight="3.5"
         android:stretchColumns="2"
         android:padding="20dp"
-        android:background="#fffafa">
+        android:background="#FFFEF1">
 
         <TableRow>
             <TextView
@@ -115,7 +115,7 @@
         android:layout_marginTop="30dp"
         android:stretchColumns="2"
         android:padding="15dp"
-        android:background="#fffafa">
+        android:background="#FFFEF1">
 
         <TableRow>
             <TextView
