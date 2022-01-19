@@ -4,13 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.SurfaceControl
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
+import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
 
 class DashboardActivity : AppCompatActivity() {
     var binding: ActivityDashboardBinding? = null
     lateinit var sharedPrefUtility: SharePrefUtility
+    var transactionAdapter: TransactionAdapter? = null
+    var transactionList: ArrayList<Transaction?> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +41,15 @@ class DashboardActivity : AppCompatActivity() {
 
         binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
 
+        // get transaction list using adapter
+        transactionList = db.getAllTransactions(userid)
+        transactionAdapter = TransactionAdapter(applicationContext, transactionList)
+
+        binding!!.transactionlist.layoutManager = LinearLayoutManager(applicationContext,
+            LinearLayoutManager.VERTICAL, false)
+        binding!!.transactionlist.adapter = transactionAdapter
+
+        // onclick listeners
         binding!!.btnAddIncome.setOnClickListener{
             val gotoAddActivity = Intent(applicationContext, AddActivity:: class.java)
 
