@@ -98,12 +98,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7.9"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:paddingTop="10dp"
+        android:layout_weight="0.5"
+        android:weightSum="2.5"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_fromdate"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:background="@null"
+            android:backgroundTint="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MMMM/dd/yyyy"
+            android:maxLines="1"
+            android:lines="1"
+            android:singleLine="true"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusableInTouchMode="false"
+            android:focusable="false"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/daterange"
+            android:layout_weight="0.2"/>
+
+        <EditText
+            android:id="@+id/et_todate"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:background="@null"
+            android:backgroundTint="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MMMM/dd/yyyy"
+            android:maxLines="1"
+            android:lines="1"
+            android:singleLine="true"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusableInTouchMode="false"
+            android:focusable="false"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7.4"
+        android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:orientation="vertical">
-
 <!--        <Spinner-->
 <!--            android:id="@+id/transaction_date"-->
 <!--            android:textColor="@color/black"-->

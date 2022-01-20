@@ -1,12 +1,14 @@
 package com.mobdeve.s12.tulabot.villanueva.financeup.util
 
 import android.R
+import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobdeve.s12.tulabot.villanueva.financeup.DBHelper
 import com.mobdeve.s12.tulabot.villanueva.financeup.DashboardActivity
@@ -15,12 +17,16 @@ import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityTransactionsBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TransactionsActivity : AppCompatActivity() {
     var binding: ActivityTransactionsBinding? = null
     lateinit var sharedPrefUtility: SharePrefUtility
     var transactionAdapter: TransactionAdapter? = null
     var transactionList: ArrayList<Transaction?> = ArrayList()
+    var cal = Calendar.getInstance()
     var type = "Income"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +38,15 @@ class TransactionsActivity : AppCompatActivity() {
         var db = DBHelper(applicationContext)
         sharedPrefUtility = SharePrefUtility(this)
         val userid = sharedPrefUtility.getIntegerPreferences("id")
+
+        // set date range
+        var sdf = SimpleDateFormat("yyyy-MM-dd")
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        var fromDate = sdf.format(cal.getTime())
+        binding!!.etFromdate.setText(fromDate, TextView.BufferType.EDITABLE)
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
+        var toDate = sdf.format(cal.getTime())
+        binding!!.etTodate.setText(toDate, TextView.BufferType.EDITABLE)
 
         // get transaction list using adapter
         transactionList = db.getAllTransactions(userid,"All")
@@ -50,6 +65,36 @@ class TransactionsActivity : AppCompatActivity() {
         spinner.setAdapter(adapter)
 
         // set onclick listeners
+        binding!!.etFromdate.setOnClickListener {
+            cal = Calendar.getInstance()
+            cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val dpd =
+                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{ view, year, month, dayOfMonth ->
+                    cal.set(year,month,dayOfMonth)
+                    val pickedNewDate = sdf.format(cal.getTime())
+                    binding!!.etFromdate.setText(pickedNewDate)
+                }, year, month, day)
+            dpd.show()
+        }
+
+        binding!!.etTodate.setOnClickListener {
+            cal = Calendar.getInstance()
+            cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val dpd =
+                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+                    cal.set(year,month,dayOfMonth)
+                    val pickedNewDate = sdf.format(cal.getTime())
+                    binding!!.etTodate.setText(pickedNewDate)
+                }, year, month, day)
+            dpd.show()
+        }
+
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -90,6 +135,7 @@ class TransactionsActivity : AppCompatActivity() {
                 LinearLayoutManager.VERTICAL, false)
             binding!!.transactionsList.adapter = transactionAdapter
         }
+
         binding!!.btnIncome.setOnClickListener {
             type="Income"
             spinner.visibility = View.VISIBLE
@@ -163,4 +209,5 @@ class TransactionsActivity : AppCompatActivity() {
         }
 
     }
+
 }
