@@ -147,6 +147,7 @@ class TransactionsActivity : AppCompatActivity() {
             binding!!.transactionsList.adapter = transactionAdapter
         }
 
+        // bottom app buttons
         binding!!.btnHome.setOnClickListener{
             val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
 

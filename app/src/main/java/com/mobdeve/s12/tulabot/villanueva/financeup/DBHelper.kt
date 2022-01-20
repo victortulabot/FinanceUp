@@ -2,11 +2,13 @@ package com.mobdeve.s12.tulabot.villanueva.financeup
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import java.lang.Exception
 import java.sql.Date
@@ -288,6 +290,13 @@ class DBHelper(var context: Context?) :
         }
 
         return transactionList
+    }
+
+    fun resetData(userid: Int?){
+        val db = this.writableDatabase
+        db.delete(TABLETRANSACTIONS, "$USERID=?", arrayOf(userid.toString()))
+
+        db.close()
     }
 
     fun dateFormat(rawdate: Calendar): String{

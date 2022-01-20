@@ -75,6 +75,7 @@ class DashboardActivity : AppCompatActivity() {
             finish()
         }
 
+        // bottom app buttons
         binding!!.btnTransactions.setOnClickListener {
             val gotoTransactionsActivity = Intent(applicationContext, TransactionsActivity:: class.java)
 
