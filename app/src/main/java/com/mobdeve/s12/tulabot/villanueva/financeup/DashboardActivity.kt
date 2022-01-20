@@ -3,15 +3,11 @@ package com.mobdeve.s12.tulabot.villanueva.financeup
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.SurfaceControl
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
-import com.mobdeve.s12.tulabot.villanueva.financeup.util.TransactionsActivity
 
 class DashboardActivity : AppCompatActivity() {
     var binding: ActivityDashboardBinding? = null
@@ -56,6 +52,7 @@ class DashboardActivity : AppCompatActivity() {
 
             // pass data using bundle
             var bundle = Bundle()
+            bundle.putString("action", "add")
             bundle.putString("type", "Income")
             gotoAddActivity.putExtras(bundle)
 
@@ -68,6 +65,7 @@ class DashboardActivity : AppCompatActivity() {
 
             // pass data using bundle
             var bundle = Bundle()
+            bundle.putString("action", "add")
             bundle.putString("type", "Expense")
             gotoAddActivity.putExtras(bundle)
 

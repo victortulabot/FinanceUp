@@ -1,4 +1,4 @@
-package com.mobdeve.s12.tulabot.villanueva.financeup.util
+package com.mobdeve.s12.tulabot.villanueva.financeup
 
 import android.R
 import android.app.DatePickerDialog
@@ -13,13 +13,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mobdeve.s12.tulabot.villanueva.financeup.DBHelper
-import com.mobdeve.s12.tulabot.villanueva.financeup.DashboardActivity
-import com.mobdeve.s12.tulabot.villanueva.financeup.SettingsActivity
 import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
-import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityDashboardBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityTransactionsBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
+import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList

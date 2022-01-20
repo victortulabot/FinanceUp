@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivitySettingsBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
-import com.mobdeve.s12.tulabot.villanueva.financeup.util.TransactionsActivity
 
 class SettingsActivity : AppCompatActivity() {
     var binding: ActivitySettingsBinding? = null

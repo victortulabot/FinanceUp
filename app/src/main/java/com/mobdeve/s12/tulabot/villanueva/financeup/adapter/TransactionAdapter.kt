@@ -1,10 +1,13 @@
 package com.mobdeve.s12.tulabot.villanueva.financeup.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.mobdeve.s12.tulabot.villanueva.financeup.AddActivity
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ItemTransactionRowBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import java.text.SimpleDateFormat
@@ -24,6 +27,7 @@ class TransactionAdapter(private val context: Context,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindTransaction(transactionList[position]!!)
+        holder.viewTransaction(transactionList[position]!!)
     }
 
     class ViewHolder(private val itemBinding: ItemTransactionRowBinding)
@@ -51,6 +55,24 @@ class TransactionAdapter(private val context: Context,
             }
 
             // set picture based on category
+        }
+
+        fun viewTransaction(transaction: Transaction){
+            itemBinding.transCardView.setOnClickListener{
+                val gotoAddActivity = Intent(itemBinding.root.context, AddActivity:: class.java)
+
+                var bundle = Bundle()
+                bundle.putString("action", "view")
+                bundle.putInt("tid", transaction.t_id)
+                bundle.putString("type", transaction.type)
+                bundle.putString("transDate", transaction.transdate)
+                bundle.putFloat("amount", transaction.amount)
+                bundle.putString("category", transaction.category)
+                bundle.putString("note", transaction.note)
+                gotoAddActivity.putExtras(bundle)
+
+                itemBinding.root.context.startActivity(gotoAddActivity)
+            }
         }
     }
 }

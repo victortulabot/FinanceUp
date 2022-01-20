@@ -32,8 +32,8 @@ class AddActivity : AppCompatActivity() {
         // receive data using bundle
         val bundle = intent.extras
         val type = bundle!!.getString("type")
-
-        binding!!.tvAddHeader.text = "Add $type"
+        val action = bundle!!.getString("action")
+        val sdf = SimpleDateFormat("MMMM dd, yyyy")
 
         val spinner = binding!!.spinnerCategory
         var List: ArrayList<String> = ArrayList<String>();
@@ -53,9 +53,39 @@ class AddActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        val myFormat = "MMMM dd, yyyy"
-        val sdf = SimpleDateFormat(myFormat)
-        binding!!.etDate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
+        if(action.equals("add")){
+            binding!!.btnAdd.text = "Add"
+            binding!!.tvAddHeader.text = "Add $type"
+
+            binding!!.etDate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
+        }
+        else if(action.equals("view")){
+            binding!!.btnAdd.text = "Edit"
+            binding!!.tvAddHeader.text = "View $type"
+
+            // format date
+            val date = bundle!!.getString("transDate")
+            val sdf = SimpleDateFormat("MMMM dd, yyyy");
+            val sdf2 = SimpleDateFormat("yyyy-MM-dd");
+            val p_date = sdf2.parse(date)
+            val f_date = sdf.format(p_date)
+            binding!!.etDate.setText(f_date)
+            binding!!.etAmount.setText(bundle!!.getFloat("amount").toString(), TextView.BufferType.EDITABLE)
+            var valuePosition = adapter.getPosition(bundle!!.getString("category"))
+            spinner.setSelection(valuePosition)
+            binding!!.etNote.setText(bundle!!.getString("note"), TextView.BufferType.EDITABLE)
+        }
+
+        binding!!.tvPhoto.setOnClickListener {
+            dispatchTakePictureIntent()
+        }
+
+        binding!!.btnCancel.setOnClickListener {
+            val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
+
+            startActivity(gotoDashboardActivity)
+            finish()
+        }
 
         val year = cal.get(Calendar.YEAR)
         val month = cal.get(Calendar.MONTH)
@@ -69,17 +99,6 @@ class AddActivity : AppCompatActivity() {
                     binding!!.etDate.setText(pickedNewDate)
                 }, year, month, day)
             dpd.show()
-        }
-
-        binding!!.tvPhoto.setOnClickListener {
-            dispatchTakePictureIntent()
-        }
-
-        binding!!.btnCancel.setOnClickListener {
-            val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
-
-            startActivity(gotoDashboardActivity)
-            finish()
         }
 
         binding!!.btnAdd.setOnClickListener{
@@ -103,15 +122,24 @@ class AddActivity : AppCompatActivity() {
                 ).show()
             } else {
                 val amount = am.toFloat()
-                db.insertTransaction(userid,type,f_date,amount,category,note)
 
-                Toast.makeText(applicationContext,
-                    "Transaction added successfully!",
-                    Toast.LENGTH_SHORT).show()
+                if(action.equals("add")){
+                    db.insertTransaction(userid,type,f_date,amount,category,note)
+                    Toast.makeText(applicationContext,
+                        "Transaction added successfully!",
+                        Toast.LENGTH_SHORT).show()
+                }
+                else if(action.equals("view")){
+                    val tid = bundle!!.getInt("tid")
+                    db.editTransaction(tid,userid,type,f_date,amount,category,note)
+                    Toast.makeText(applicationContext,
+                        "Transaction edited successfully!",
+                        Toast.LENGTH_SHORT).show()
+                }
 
-                val gotoDashboardActivity = Intent(applicationContext, DashboardActivity:: class.java)
+                val gotoTransactionsActivity = Intent(applicationContext, TransactionsActivity:: class.java)
 
-                startActivity(gotoDashboardActivity)
+                startActivity(gotoTransactionsActivity)
                 finish()
             }
         }

@@ -158,6 +158,21 @@ class DBHelper(var context: Context?) :
         db.close()
     }
 
+    fun editTransaction(tid: Int, userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String){
+        val db = this.writableDatabase
+        val cv = ContentValues()
+
+        cv.put(TYPE, type)
+        cv.put(TRANSDATE, transDate)
+        cv.put(AMOUNT, amount)
+        cv.put(CATEGORY, category)
+        cv.put(NOTE, note)
+
+        db.update("transactions", cv, "userid = ? and _id = ?", arrayOf(userid.toString(), tid.toString()))
+
+        db.close()
+    }
+
     fun getIncomeTransactions(userid: Int?): Float{
         val db = this.readableDatabase
         val query = "Select SUM(amount) from transactions where userid = ? and type = ?"
