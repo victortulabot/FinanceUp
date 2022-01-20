@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ItemTransactionRowBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
+import java.text.SimpleDateFormat
 
 class TransactionAdapter(private val context: Context,
                          private var transactionList: ArrayList<Transaction?>
@@ -31,7 +32,14 @@ class TransactionAdapter(private val context: Context,
         // set the data
         fun bindTransaction(transaction: Transaction){
             itemBinding.category.text = transaction.category
-            itemBinding.transdate.text = transaction.transdate
+
+            // format date
+            val date = transaction.transdate
+            val sdf = SimpleDateFormat("MMMM dd, yyyy");
+            val sdf2 = SimpleDateFormat("yyyy-MM-dd");
+            val p_date = sdf2.parse(date)
+            val f_date = sdf.format(p_date)
+            itemBinding.transdate.text = f_date
 
             // change color of text based on type
             if(transaction.type == "Income"){

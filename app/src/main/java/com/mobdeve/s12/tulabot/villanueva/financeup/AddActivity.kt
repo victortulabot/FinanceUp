@@ -89,6 +89,11 @@ class AddActivity : AppCompatActivity() {
             val category = binding!!.spinnerCategory.selectedItem.toString()
             val note = binding!!.etNote.text.toString()
 
+            // format date
+            val sdf2 = SimpleDateFormat("yyyy-MM-dd");
+            val p_date = sdf.parse(transDate)
+            var f_date = sdf2.format(p_date)
+
             // check if inputs are not empty
             if (am == "") {
                 Toast.makeText(
@@ -98,7 +103,7 @@ class AddActivity : AppCompatActivity() {
                 ).show()
             } else {
                 val amount = am.toFloat()
-                db.insertTransaction(userid,type,transDate,amount,category,note)
+                db.insertTransaction(userid,type,f_date,amount,category,note)
 
                 Toast.makeText(applicationContext,
                     "Transaction added successfully!",

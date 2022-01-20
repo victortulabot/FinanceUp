@@ -5,10 +5,13 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobdeve.s12.tulabot.villanueva.financeup.DBHelper
 import com.mobdeve.s12.tulabot.villanueva.financeup.DashboardActivity
@@ -27,7 +30,19 @@ class TransactionsActivity : AppCompatActivity() {
     var transactionAdapter: TransactionAdapter? = null
     var transactionList: ArrayList<Transaction?> = ArrayList()
     var cal = Calendar.getInstance()
-    var type = "Income"
+    var category = "All"
+    var type = "All"
+
+//    var cal = Calendar.getInstance();
+//    var sdf = SimpleDateFormat("MMMM dd, yyyy");
+//    var date = sdf.format(cal.getTime())
+//
+//    var sdf2 = SimpleDateFormat("yyyy-MM-dd");
+//    var p_date = sdf.parse(date)
+//    var f_date = sdf2.format(p_date)
+//
+//    println(date)
+//    println(f_date)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,14 +57,12 @@ class TransactionsActivity : AppCompatActivity() {
         // set date range
         var sdf = SimpleDateFormat("yyyy-MM-dd")
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-        var fromDate = sdf.format(cal.getTime())
-        binding!!.etFromdate.setText(fromDate, TextView.BufferType.EDITABLE)
+        binding!!.etFromdate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
-        var toDate = sdf.format(cal.getTime())
-        binding!!.etTodate.setText(toDate, TextView.BufferType.EDITABLE)
+        binding!!.etTodate.setText(sdf.format(cal.getTime()), TextView.BufferType.EDITABLE)
 
         // get transaction list using adapter
-        transactionList = db.getAllTransactions(userid,"All")
+        transactionList = db.getAllTransactions(userid, type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
         transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
         binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
@@ -64,37 +77,7 @@ class TransactionsActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter)
 
-        // set onclick listeners
-        binding!!.etFromdate.setOnClickListener {
-            cal = Calendar.getInstance()
-            cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-            val year = cal.get(Calendar.YEAR)
-            val month = cal.get(Calendar.MONTH)
-            val day = cal.get(Calendar.DAY_OF_MONTH)
-            val dpd =
-                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{ view, year, month, dayOfMonth ->
-                    cal.set(year,month,dayOfMonth)
-                    val pickedNewDate = sdf.format(cal.getTime())
-                    binding!!.etFromdate.setText(pickedNewDate)
-                }, year, month, day)
-            dpd.show()
-        }
-
-        binding!!.etTodate.setOnClickListener {
-            cal = Calendar.getInstance()
-            cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
-            val year = cal.get(Calendar.YEAR)
-            val month = cal.get(Calendar.MONTH)
-            val day = cal.get(Calendar.DAY_OF_MONTH)
-            val dpd =
-                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
-                    cal.set(year,month,dayOfMonth)
-                    val pickedNewDate = sdf.format(cal.getTime())
-                    binding!!.etTodate.setText(pickedNewDate)
-                }, year, month, day)
-            dpd.show()
-        }
-
+        // set onchange listeners
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -104,7 +87,8 @@ class TransactionsActivity : AppCompatActivity() {
             ) {
                 // get transaction list using adapter
                 if (parent != null) {
-                    transactionList = db.getFilterTransactions(userid, type, parent.getItemAtPosition(position).toString())
+                    category = parent.getItemAtPosition(position).toString()
+                    transactionList = db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
                     transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
                     binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
@@ -118,7 +102,75 @@ class TransactionsActivity : AppCompatActivity() {
             }
         }
 
+        binding!!.etFromdate.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+
+                transactionList = if(spinner.isShown){
+                    db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                } else{
+                    db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                }
+
+                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
+
+                binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
+                    LinearLayoutManager.VERTICAL, false)
+                binding!!.transactionsList.adapter = transactionAdapter
+            }
+        })
+
+        binding!!.etTodate.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                transactionList = if(spinner.isShown){
+                    db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                } else{
+                    db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                }
+                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
+
+                binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
+                    LinearLayoutManager.VERTICAL, false)
+                binding!!.transactionsList.adapter = transactionAdapter
+            }
+        })
+
+        // set onclick listeners
+        binding!!.etFromdate.setOnClickListener {
+            cal = Calendar.getInstance()
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+
+            val dpd =
+                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{ view, year, month, dayOfMonth ->
+                    cal.set(year,month,dayOfMonth)
+                    val pickedNewDate = sdf.format(cal.getTime())
+                    binding!!.etFromdate.setText(pickedNewDate)
+                }, year, month, day)
+            dpd.show()
+        }
+
+        binding!!.etTodate.setOnClickListener {
+            cal = Calendar.getInstance()
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+
+            val dpd =
+                DatePickerDialog(this@TransactionsActivity, DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+                    cal.set(year,month,dayOfMonth)
+                    val pickedNewDate = sdf.format(cal.getTime())
+                    binding!!.etTodate.setText(pickedNewDate)
+                }, year, month, day)
+            dpd.show()
+        }
+
         binding!!.btnAll.setOnClickListener {
+            type = "All"
             spinner.visibility = View.INVISIBLE
             binding!!.btnAll.backgroundTintList =
                 getColorStateList(R.color.darker_gray)
@@ -128,7 +180,7 @@ class TransactionsActivity : AppCompatActivity() {
                 getColorStateList(R.color.white)
 
             // get transaction list using adapter
-            transactionList = db.getAllTransactions(userid,"All")
+            transactionList = db.getAllTransactions(userid,"All", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
             transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
             binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
@@ -155,7 +207,7 @@ class TransactionsActivity : AppCompatActivity() {
             spinner.setAdapter(adapter)
 
             // get transaction list using adapter
-            transactionList = db.getAllTransactions(userid,"Income")
+            transactionList = db.getAllTransactions(userid, type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
             transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
             binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
@@ -185,7 +237,7 @@ class TransactionsActivity : AppCompatActivity() {
             spinner.setAdapter(adapter)
 
             // get transaction list using adapter
-            transactionList = db.getAllTransactions(userid,"Expense")
+            transactionList = db.getAllTransactions(userid, type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
             transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
             binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,

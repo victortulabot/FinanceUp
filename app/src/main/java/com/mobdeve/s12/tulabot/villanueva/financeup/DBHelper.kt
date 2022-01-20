@@ -185,7 +185,10 @@ class DBHelper(var context: Context?) :
     }
 
     fun getDashboardTransactions(userid: Int?): ArrayList<Transaction?>{
-        val date = dateFormat(Calendar.getInstance())
+        val cal = Calendar.getInstance();
+        val sdf = SimpleDateFormat("yyyy-MM-dd");
+        val date = sdf.format(cal.getTime())
+        
         val db = this.readableDatabase
         val query = "Select * from transactions where userid = ? and transdate = ? order by _id desc"
         val cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), date))
@@ -217,15 +220,15 @@ class DBHelper(var context: Context?) :
         return transactionList
     }
 
-    fun getFilterTransactions(userid: Int?, type: String, category: String): ArrayList<Transaction?>{
+    fun getFilterTransactions(userid: Int?, type: String, category: String, from: String, to: String): ArrayList<Transaction?>{
         val db = this.readableDatabase
-        var query = "Select * from transactions where userid = ? and type = ? and category = ? order by transDate desc, _id desc"
-        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type, category))
+        var query = "Select * from transactions where userid = ? and type = ? and category = ? and transDate between ? and ? order by transDate desc, _id desc"
+        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type, category, from, to))
         var transactionList: ArrayList<Transaction?> = ArrayList();
 
         if(category == "All"){
-            query = "Select * from transactions where userid = ? and type = ? order by transDate desc, _id desc"
-            cursor = db.rawQuery(query, arrayOf(userid.toString(), type))
+            query = "Select * from transactions where userid = ? and type = ? and transDate between ? and ? order by transDate desc, _id desc"
+            cursor = db.rawQuery(query, arrayOf(userid.toString(), type, from, to))
         }
 
         try{
@@ -255,15 +258,15 @@ class DBHelper(var context: Context?) :
     }
 
     // transaction table columns - _id, USERID, TYPE, TRANSDATE. AMOUNT, CATEGORY, NOTE
-    fun getAllTransactions(userid: Int?, type:String): ArrayList<Transaction?>{
+    fun getAllTransactions(userid: Int?, type:String, from: String, to: String): ArrayList<Transaction?>{
         val db = this.readableDatabase
-        var query = "Select * from transactions where userid = ? and type = ? order by transDate desc, _id desc"
-        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type))
+        var query = "Select * from transactions where userid = ? and type = ? and transDate between ? and ? order by transDate desc, _id desc"
+        var cursor: Cursor = db.rawQuery(query, arrayOf(userid.toString(), type, from, to))
         var transactionList: ArrayList<Transaction?> = ArrayList();
 
         if(type == "All"){
-            query = "Select * from transactions where userid = ? order by transDate desc, _id desc"
-            cursor = db.rawQuery(query, arrayOf(userid.toString()))
+            query = "Select * from transactions where userid = ? and transDate between ? and ? order by transDate desc, _id desc"
+            cursor = db.rawQuery(query, arrayOf(userid.toString(), from, to))
         }
 
         try{
