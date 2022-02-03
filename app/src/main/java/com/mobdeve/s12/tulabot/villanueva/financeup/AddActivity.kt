@@ -25,7 +25,7 @@ class AddActivity : AppCompatActivity() {
     var binding: ActivityAddBinding? = null
     lateinit var sharedPrefUtility: SharePrefUtility
     var cal = Calendar.getInstance()
-    var imageNote: ByteArray? = null
+    var imageNote: ByteArray? = ByteArray(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
