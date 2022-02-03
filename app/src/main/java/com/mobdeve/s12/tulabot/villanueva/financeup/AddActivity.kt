@@ -3,14 +3,20 @@ package com.mobdeve.s12.tulabot.villanueva.financeup
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageHelper
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ActivityAddBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.util.SharePrefUtility
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -19,6 +25,7 @@ class AddActivity : AppCompatActivity() {
     var binding: ActivityAddBinding? = null
     lateinit var sharedPrefUtility: SharePrefUtility
     var cal = Calendar.getInstance()
+    var imageNote: ByteArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,10 +81,24 @@ class AddActivity : AppCompatActivity() {
             var valuePosition = adapter.getPosition(bundle!!.getString("category"))
             spinner.setSelection(valuePosition)
             binding!!.etNote.setText(bundle!!.getString("note"), TextView.BufferType.EDITABLE)
+
+            val imgBit = bundle!!.getByteArray("imageNote")
+            val imgNote = BitmapFactory.decodeByteArray(imgBit, 0, imgBit!!.size)
+            binding!!.ivNote.setImageBitmap(imgNote)
+            binding!!.expandedIvnote.setImageBitmap(imgNote)
         }
 
         binding!!.tvPhoto.setOnClickListener {
-            dispatchTakePictureIntent()
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(takePictureIntent, 1)
+        }
+
+        binding!!.ivNote.setOnClickListener {
+            binding!!.expandedIvnote.visibility = View.VISIBLE
+        }
+
+        binding!!.expandedIvnote.setOnClickListener {
+            binding!!.expandedIvnote.visibility = View.GONE
         }
 
         binding!!.btnCancel.setOnClickListener {
@@ -124,14 +145,14 @@ class AddActivity : AppCompatActivity() {
                 val amount = am.toFloat()
 
                 if(action.equals("add")){
-                    db.insertTransaction(userid,type,f_date,amount,category,note)
+                    db.insertTransaction(userid,type,f_date,amount,category,note, imageNote)
                     Toast.makeText(applicationContext,
                         "Transaction added successfully!",
                         Toast.LENGTH_SHORT).show()
                 }
                 else if(action.equals("view")){
                     val tid = bundle!!.getInt("tid")
-                    db.editTransaction(tid,userid,type,f_date,amount,category,note)
+                    db.editTransaction(tid,userid,type,f_date,amount,category,note, imageNote)
                     Toast.makeText(applicationContext,
                         "Transaction edited successfully!",
                         Toast.LENGTH_SHORT).show()
@@ -145,15 +166,19 @@ class AddActivity : AppCompatActivity() {
         }
     }
 
-    val REQUEST_IMAGE_CAPTURE = 1
 
-    private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            var imageBitmap = data!!.extras!!.get("data") as Bitmap
+            binding!!.ivNote.setImageBitmap(imageBitmap)
+            binding!!.expandedIvnote.setImageBitmap(imageBitmap)
+
+            val stream = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            imageNote = stream.toByteArray()
         }
     }
+
 
 }

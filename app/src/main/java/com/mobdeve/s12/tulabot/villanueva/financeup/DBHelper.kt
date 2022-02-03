@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import java.lang.Exception
+import java.sql.Blob
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,6 +48,7 @@ class DBHelper(var context: Context?) :
         const val AMOUNT = "amount"
         const val CATEGORY = "category"
         const val NOTE = "note"
+        const val IMGNOTE = "imageNote"
 
         private const val CREATE_USER_TABLE = ("create table " + TABLEUSERS + "("
                 + USERSID + " integer primary key autoincrement, "
@@ -59,7 +61,8 @@ class DBHelper(var context: Context?) :
                 + TRANSDATE + " text, "
                 + AMOUNT + " float, "
                 + CATEGORY + " text, "
-                + NOTE + " text ) ")
+                + NOTE + " text, "
+                + IMGNOTE + " blob ) ")
     }
 
     fun insertDataUser(username: String, password: String){
@@ -143,7 +146,7 @@ class DBHelper(var context: Context?) :
         db.close()
     }
 
-    fun insertTransaction(userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String){
+    fun insertTransaction(userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String, imageNote: ByteArray?){
         val db = this.writableDatabase
         val cv = ContentValues()
 
@@ -153,12 +156,13 @@ class DBHelper(var context: Context?) :
         cv.put(AMOUNT, amount)
         cv.put(CATEGORY, category)
         cv.put(NOTE, note)
+        cv.put(IMGNOTE, imageNote)
         db.insert(TABLETRANSACTIONS, null, cv)
 
         db.close()
     }
 
-    fun editTransaction(tid: Int, userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String){
+    fun editTransaction(tid: Int, userid: Int?, type: String?, transDate: String, amount: Float, category: String, note: String, imageNote: ByteArray?){
         val db = this.writableDatabase
         val cv = ContentValues()
 
@@ -167,6 +171,7 @@ class DBHelper(var context: Context?) :
         cv.put(AMOUNT, amount)
         cv.put(CATEGORY, category)
         cv.put(NOTE, note)
+        cv.put(IMGNOTE, imageNote)
 
         db.update("transactions", cv, "userid = ? and _id = ?", arrayOf(userid.toString(), tid.toString()))
 
@@ -219,9 +224,10 @@ class DBHelper(var context: Context?) :
                     val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
                     val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
                     val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+                    val imageNote = cursor.getBlob((cursor.getColumnIndexOrThrow(IMGNOTE)))
 
                     transactionList.add(Transaction(id.toInt(),userid.toInt(),
-                        type,transdate,amount.toFloat(), category,note))
+                        type,transdate,amount.toFloat(), category,note,imageNote))
                 } while(cursor.moveToNext())
             }
         } catch (e: Exception){
@@ -256,9 +262,10 @@ class DBHelper(var context: Context?) :
                     val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
                     val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
                     val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+                    val imageNote = cursor.getBlob((cursor.getColumnIndexOrThrow(IMGNOTE)))
 
                     transactionList.add(Transaction(id.toInt(),userid.toInt(),
-                        type,transdate,amount.toFloat(), category,note))
+                        type,transdate,amount.toFloat(), category,note,imageNote))
                 } while(cursor.moveToNext())
             }
         } catch (e: Exception){
@@ -294,9 +301,10 @@ class DBHelper(var context: Context?) :
                     val amount = cursor.getString(cursor.getColumnIndexOrThrow(AMOUNT))
                     val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
                     val note = cursor.getString(cursor.getColumnIndexOrThrow(NOTE))
+                    val imageNote = cursor.getBlob((cursor.getColumnIndexOrThrow(IMGNOTE)))
 
                     transactionList.add(Transaction(id.toInt(),userid.toInt(),
-                        type,transdate,amount.toFloat(), category,note))
+                        type,transdate,amount.toFloat(), category,note, imageNote))
                 } while(cursor.moveToNext())
             }
         } catch (e: Exception){

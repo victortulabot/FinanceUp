@@ -69,6 +69,7 @@ class TransactionAdapter(private val context: Context,
                 bundle.putFloat("amount", transaction.amount)
                 bundle.putString("category", transaction.category)
                 bundle.putString("note", transaction.note)
+                bundle.putByteArray("imageNote", transaction.imagenote)
                 gotoAddActivity.putExtras(bundle)
 
                 itemBinding.root.context.startActivity(gotoAddActivity)
