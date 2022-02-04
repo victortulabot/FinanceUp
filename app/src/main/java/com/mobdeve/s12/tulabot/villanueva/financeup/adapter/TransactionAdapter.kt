@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.s12.tulabot.villanueva.financeup.AddActivity
+import com.mobdeve.s12.tulabot.villanueva.financeup.R
 import com.mobdeve.s12.tulabot.villanueva.financeup.databinding.ItemTransactionRowBinding
 import com.mobdeve.s12.tulabot.villanueva.financeup.model.Transaction
 import java.text.SimpleDateFormat
@@ -55,6 +56,21 @@ class TransactionAdapter(private val context: Context,
             }
 
             // set picture based on category
+            if(transaction.category == "Salary"){
+                itemBinding.image.setImageResource(R.drawable.salary)
+            }else if(transaction.category == "Carry Over"){
+                itemBinding.image.setImageResource(R.drawable.carryover)
+            }else if(transaction.category == "Clothing"){
+                itemBinding.image.setImageResource(R.drawable.clothing)
+            }else if(transaction.category == "General"){
+                itemBinding.image.setImageResource(R.drawable.general)
+            }else if(transaction.category == "Transportation"){
+                itemBinding.image.setImageResource(R.drawable.transportation)
+            }else if(transaction.category == "Entertainment"){
+                itemBinding.image.setImageResource(R.drawable.entertainment)
+            }else if(transaction.category == "Utilities"){
+                itemBinding.image.setImageResource(R.drawable.utilities)
+            }
         }
 
         fun viewTransaction(transaction: Transaction){

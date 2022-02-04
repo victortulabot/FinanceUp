@@ -279,6 +279,42 @@ class DBHelper(var context: Context?) :
         return transactionList
     }
 
+    fun getFilterTransactionsAmount(userid: Int?, type: String, category: String, from: String, to: String): Float{
+        val db = this.readableDatabase
+        var query = "Select SUM(amount) from transactions where userid = ? and type = ? and category = ? and transDate between ? and ? order by transDate desc, _id desc"
+        var result = db.rawQuery(query, arrayOf(userid.toString(), type, category, from, to))
+
+        if(category == "All"){
+            query = "Select SUM(amount) from transactions where userid = ? and type = ? and transDate between ? and ? order by transDate desc, _id desc"
+            result = db.rawQuery(query, arrayOf(userid.toString(), type, from, to))
+        }
+
+        var retRes = 0F
+        if(result.moveToFirst()){
+            retRes = result.getFloat(0)
+        }
+
+        return retRes
+    }
+
+    fun getAllTransactionsAmount(userid: Int?, type:String, from: String, to: String): Float{
+        val db = this.readableDatabase
+        var query = "Select SUM(amount) from transactions where userid = ? and type = ? and transDate between ? and ? order by transDate desc, _id desc"
+        var result  = db.rawQuery(query, arrayOf(userid.toString(), type, from, to))
+
+        if(type == "All"){
+            query = "Select * from transactions where userid = ? and transDate between ? and ? order by transDate desc, _id desc"
+            result = db.rawQuery(query, arrayOf(userid.toString(), from, to))
+        }
+
+        var retRes = 0F
+        if(result.moveToFirst()){
+            retRes = result.getFloat(0)
+        }
+
+        return retRes
+    }
+
     // transaction table columns - _id, USERID, TYPE, TRANSDATE. AMOUNT, CATEGORY, NOTE
     fun getAllTransactions(userid: Int?, type:String, from: String, to: String): ArrayList<Transaction?>{
         val db = this.readableDatabase

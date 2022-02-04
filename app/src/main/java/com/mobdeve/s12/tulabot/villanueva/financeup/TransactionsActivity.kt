@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mobdeve.s12.tulabot.villanueva.financeup.adapter.TransactionAdapter
@@ -29,17 +30,6 @@ class TransactionsActivity : AppCompatActivity() {
     var cal = Calendar.getInstance()
     var category = "All"
     var type = "All"
-
-//    var cal = Calendar.getInstance();
-//    var sdf = SimpleDateFormat("MMMM dd, yyyy");
-//    var date = sdf.format(cal.getTime())
-//
-//    var sdf2 = SimpleDateFormat("yyyy-MM-dd");
-//    var p_date = sdf.parse(date)
-//    var f_date = sdf2.format(p_date)
-//
-//    println(date)
-//    println(f_date)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +55,17 @@ class TransactionsActivity : AppCompatActivity() {
         binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
             LinearLayoutManager.VERTICAL, false)
         binding!!.transactionsList.adapter = transactionAdapter
+
+        // get income and expense, balance
+        var getIncome = db.getAllTransactionsAmount(userid, "Income", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+        var getExpense = db.getAllTransactionsAmount(userid, "Expense", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+
+        binding!!.tvIncome.text = "₱$getIncome"
+        binding!!.tvExpense.text = "₱$getExpense"
+
+        var income = binding!!.tvIncome.text.toString().split("₱");
+        var expense = binding!!.tvExpense.text.toString().split("₱");
+        binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
 
         val spinner = binding!!.transactionCategory
         spinner.visibility = View.INVISIBLE
@@ -92,6 +93,26 @@ class TransactionsActivity : AppCompatActivity() {
                         LinearLayoutManager.VERTICAL, false)
                     binding!!.transactionsList.adapter = transactionAdapter
 
+                    // get income and expense, balance
+                    if((type == "Income")&&(category == "All")){
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱0"
+                    } else if ((type == "Expense")&&(category == "All")){
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱0"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    } else{
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    }
+
+                    income = binding!!.tvIncome.text.toString().split("₱");
+                    expense = binding!!.tvExpense.text.toString().split("₱");
+                    binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
+
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -104,14 +125,36 @@ class TransactionsActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
 
-                transactionList = if(spinner.isShown){
-                    db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                var transactionList =  db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                getIncome = db.getAllTransactionsAmount(userid, "Income", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                getExpense = db.getAllTransactionsAmount(userid, "Expense", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+
+                if(spinner.isShown){
+                    transactionList = db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                    if((type == "Income")&&(category == "All")){
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱0"
+                    } else if ((type == "Expense")&&(category == "All")){
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱0"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    } else{
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    }
                 } else{
-                    db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                    binding!!.tvIncome.text = "₱$getIncome"
+                    binding!!.tvExpense.text = "₱$getExpense"
                 }
 
-                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
+                income = binding!!.tvIncome.text.toString().split("₱");
+                expense = binding!!.tvExpense.text.toString().split("₱");
+                binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
 
+                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
                 binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
                     LinearLayoutManager.VERTICAL, false)
                 binding!!.transactionsList.adapter = transactionAdapter
@@ -122,13 +165,36 @@ class TransactionsActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                transactionList = if(spinner.isShown){
-                    db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
-                } else{
-                    db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
-                }
-                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
+                var transactionList =  db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                getIncome = db.getAllTransactionsAmount(userid, "Income", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                getExpense = db.getAllTransactionsAmount(userid, "Expense", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
 
+                if(spinner.isShown){
+                    transactionList = db.getFilterTransactions(userid, type, category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                    if((type == "Income")&&(category == "All")){
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱0"
+                    } else if ((type == "Expense")&&(category == "All")){
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱0"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    } else{
+                        getIncome = db.getFilterTransactionsAmount(userid, "Income", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        getExpense = db.getFilterTransactionsAmount(userid, "Expense", category, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+                        binding!!.tvIncome.text = "₱$getIncome"
+                        binding!!.tvExpense.text = "₱$getExpense"
+                    }
+                } else{
+                    binding!!.tvIncome.text = "₱$getIncome"
+                    binding!!.tvExpense.text = "₱$getExpense"
+                }
+
+                income = binding!!.tvIncome.text.toString().split("₱");
+                expense = binding!!.tvExpense.text.toString().split("₱");
+                binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
+
+                transactionAdapter = TransactionAdapter(applicationContext, transactionList)
                 binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
                     LinearLayoutManager.VERTICAL, false)
                 binding!!.transactionsList.adapter = transactionAdapter
@@ -177,12 +243,23 @@ class TransactionsActivity : AppCompatActivity() {
                 getColorStateList(R.color.white)
 
             // get transaction list using adapter
-            transactionList = db.getAllTransactions(userid,"All", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+            transactionList = db.getAllTransactions(userid,type, binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
             transactionAdapter = TransactionAdapter(applicationContext, transactionList)
 
             binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
                 LinearLayoutManager.VERTICAL, false)
             binding!!.transactionsList.adapter = transactionAdapter
+
+            // get income and expense, balance
+            getIncome = db.getAllTransactionsAmount(userid, "Income", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+            getExpense = db.getAllTransactionsAmount(userid, "Expense", binding!!.etFromdate.text.toString(), binding!!.etTodate.text.toString())
+
+            binding!!.tvIncome.text = "₱$getIncome"
+            binding!!.tvExpense.text = "₱$getExpense"
+
+            income = binding!!.tvIncome.text.toString().split("₱");
+            expense = binding!!.tvExpense.text.toString().split("₱");
+            binding!!.tvBalance.text = "₱" + ((income[1]).toFloat() - (expense[1]).toFloat()).toString();
         }
 
         binding!!.btnIncome.setOnClickListener {
@@ -222,6 +299,7 @@ class TransactionsActivity : AppCompatActivity() {
             binding!!.btnExpense.backgroundTintList =
                 getColorStateList(R.color.darker_gray)
             List.clear()
+
             List.add("All")
             List.add("Transportation")
             List.add("Utilities")
@@ -240,6 +318,7 @@ class TransactionsActivity : AppCompatActivity() {
             binding!!.transactionsList.layoutManager = LinearLayoutManager(applicationContext,
                 LinearLayoutManager.VERTICAL, false)
             binding!!.transactionsList.adapter = transactionAdapter
+
         }
 
         // bottom app buttons
