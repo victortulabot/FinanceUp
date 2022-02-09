@@ -28,7 +28,6 @@ class SettingsActivity : AppCompatActivity() {
             val gotoChangePassActivity = Intent(applicationContext, ChangePassActivity:: class.java)
 
             startActivity(gotoChangePassActivity)
-            finish()
         }
 
         binding!!.btnLogout.setOnClickListener{

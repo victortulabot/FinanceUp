@@ -57,7 +57,6 @@ class DashboardActivity : AppCompatActivity() {
             gotoAddActivity.putExtras(bundle)
 
             startActivity(gotoAddActivity)
-            finish()
         }
 
         binding!!.btnAddExpense.setOnClickListener{
@@ -70,7 +69,6 @@ class DashboardActivity : AppCompatActivity() {
             gotoAddActivity.putExtras(bundle)
 
             startActivity(gotoAddActivity)
-            finish()
         }
 
         // bottom app buttons
