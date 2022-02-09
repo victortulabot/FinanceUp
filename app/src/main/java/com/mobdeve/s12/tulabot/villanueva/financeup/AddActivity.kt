@@ -84,13 +84,20 @@ class AddActivity : AppCompatActivity() {
 
             val imgBit = bundle!!.getByteArray("imageNote")
             val imgNote = BitmapFactory.decodeByteArray(imgBit, 0, imgBit!!.size)
-            binding!!.ivNote.setImageBitmap(imgNote)
-            binding!!.expandedIvnote.setImageBitmap(imgNote)
+
+            if (imgNote != null) {
+                binding!!.ivNote.setImageBitmap(imgNote)
+                binding!!.expandedIvnote.setImageBitmap(imgNote)
+                imageNote = imgBit
+            } else {
+                binding!!.ivNote.visibility = View.GONE
+            }
+
         }
 
         binding!!.tvPhoto.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(takePictureIntent, 1)
+            startActivityForResult(takePictureIntent, 100)
         }
 
         binding!!.ivNote.setOnClickListener {
@@ -169,10 +176,11 @@ class AddActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == 100 && resultCode == RESULT_OK) {
             var imageBitmap = data!!.extras!!.get("data") as Bitmap
             binding!!.ivNote.setImageBitmap(imageBitmap)
             binding!!.expandedIvnote.setImageBitmap(imageBitmap)
+            binding!!.ivNote.visibility = View.VISIBLE
 
             val stream = ByteArrayOutputStream()
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)

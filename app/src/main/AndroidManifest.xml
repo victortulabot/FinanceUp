@@ -28,9 +28,6 @@
             android:name=".AddActivity"
             android:exported="true" />
         <activity
-            android:name=".IncomeActivity"
-            android:exported="true" />
-        <activity
             android:name=".DashboardActivity"
             android:exported="true" />
         <activity
